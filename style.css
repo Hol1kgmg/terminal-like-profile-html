@@ -11,6 +11,7 @@
 body {
   background: #f5f5f5;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   font-family: "JetBrains Mono", "Courier New", monospace;
 }
@@ -19,6 +20,7 @@ body {
   margin: 0 auto;
   padding: 0 24px 24px;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -299,4 +301,55 @@ body {
 .tp-game-exit:hover {
   border-color: #4ec9b0;
   color: #4ec9b0;
+}
+
+/* ── モバイル対応 ── */
+@media (max-width: 600px) {
+  .tp-page {
+    padding: 0 10px 10px;
+  }
+
+  .tp-header {
+    padding-top: 12px;
+    margin-bottom: 10px;
+    gap: 4px;
+  }
+  .tp-logo-bracket {
+    font-size: 15px;
+  }
+  .tp-logo-text {
+    font-size: 13px;
+  }
+  .tp-logo-cursor {
+    width: 8px;
+    height: 14px;
+  }
+
+  .tp-block .tp-win {
+    border-radius: 8px;
+  }
+  .tp-block .tp-bar {
+    padding: 8px 10px;
+  }
+  .tp-block .tp-screen {
+    padding: 12px 10px 4px;
+    font-size: 11px;
+  }
+  .tp-block .tp-typing-row,
+  .tp-block .tp-input-row {
+    padding: 0 10px 12px;
+  }
+  .tp-block .tp-typing-prompt,
+  .tp-block .tp-prompt-label,
+  .tp-block .tp-typing-text {
+    font-size: 11px;
+  }
+  /* iOS Safari の自動ズーム防止: font-size >= 16px が必要 */
+  .tp-block .tp-input {
+    font-size: 16px;
+  }
+  .tp-block .tp-cursor {
+    width: 6px;
+    height: 12px;
+  }
 }
