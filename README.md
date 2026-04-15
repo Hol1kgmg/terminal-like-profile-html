@@ -2,6 +2,8 @@
 
 ターミナル風UIのプロフィールページ。ビルド不要の静的HTMLサイト。
 
+![](.github/screenshots/terminal_profile_screenshot.png)
+
 ## ファイル構成
 
 | ファイル | 説明 |
