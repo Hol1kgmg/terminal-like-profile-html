@@ -25,6 +25,8 @@ var COMMANDS = {
     line("  tomb        見送ったゲーム・サービス一覧", "tp-d");
     line("  game        ゲームを起動する", "tp-d");
     line("  clear       画面クリア", "tp-d");
+    // 隠しコマンド
+    // line("  exit        セッションを終了する", "tp-d");
     br();
   },
 
@@ -255,5 +257,17 @@ var COMMANDS = {
     document.getElementById("tp-screen").innerHTML = "";
     line(lastLogin(), "tp-d");
     br();
+  },
+
+  // --------------------------------------------------
+  // exit: セッション終了 → アイコン表示
+  // --------------------------------------------------
+  exit: function () {
+    br();
+    line("  logout", "tp-d");
+    br();
+    setTimeout(function () {
+      exitTerminal();
+    }, 600);
   },
 };

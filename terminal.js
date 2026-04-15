@@ -13,6 +13,8 @@ var inputRow   = document.getElementById("tp-input-row");
 var typingRow  = document.getElementById("tp-typing-row");
 var typingPrompt = document.getElementById("tp-typing-prompt");
 var typingText   = document.getElementById("tp-typing-text");
+var page        = document.querySelector(".tp-page");
+var exitOverlay = document.getElementById("tp-exit-overlay");
 var HOST = PROFILE.nameEn + "@profile ~ % ";
 document.getElementById("tp-prompt-label").textContent = HOST;
 
@@ -116,8 +118,10 @@ function renderStatusScreen(title, items, footer) {
 }
 
 // ── コマンド実行 ──
-var LINE_DELAY    = 25; // 1行あたりの表示間隔 (ms)
-var NO_ANIM_CMDS  = { clear: true, game: true };
+var LINE_DELAY     = 25;  // 1行あたりの表示間隔 (ms)
+var FADE_MS        = 500;
+var FADE_TRANSITION = "opacity " + FADE_MS + "ms ease";
+var NO_ANIM_CMDS   = { clear: true, game: true, exit: true };
 
 function echoCmd(cmd) {
   raw(HOST, "tp-p");
@@ -268,6 +272,32 @@ document.addEventListener("keydown", function (e) {
   inp.focus();
 });
 
+// ── exit / restart ──
+function exitTerminal() {
+  page.style.transition = FADE_TRANSITION;
+  page.style.opacity = "0";
+  setTimeout(function () {
+    page.style.display = "none";
+    exitOverlay.classList.add("active");
+  }, FADE_MS);
+}
+
+function restartTerminal() {
+  exitOverlay.classList.remove("active");
+  page.style.transition = "none";
+  page.style.opacity = "0";
+  page.style.display = "flex";
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      page.style.transition = FADE_TRANSITION;
+      page.style.opacity = "1";
+    });
+  });
+  startSession();
+}
+
+document.getElementById("tp-terminal-icon").addEventListener("click", restartTerminal);
+
 // game: 全画面解除ボタン
 document.getElementById("tp-game-exit").addEventListener("click", function () {
   document.getElementById("tp-game-overlay").classList.remove("active");
@@ -311,6 +341,11 @@ function lastLogin() {
 }
 
 // ── 起動 ──
-line(lastLogin(), "tp-d");
-br();
-runBoot(BOOT_SEQUENCE, 0);
+function startSession() {
+  scr.innerHTML = "";
+  lockInput();
+  line(lastLogin(), "tp-d");
+  br();
+  runBoot(BOOT_SEQUENCE, 0);
+}
+startSession();
