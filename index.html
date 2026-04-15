@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>terminal profile</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="tp-page">
+      <!-- ロゴヘッダー -->
+      <header class="tp-header">
+        <span class="tp-logo-bracket">[</span>
+        <span class="tp-logo-text">Terminal like Profile</span>
+        <span class="tp-logo-bracket">]</span>
+        <span class="tp-logo-cursor"></span>
+      </header>
+
+      <!-- ターミナルUI骨格 -->
+      <div class="tp-block">
+        <div class="tp-win">
+          <div class="tp-bar">
+            <span class="tp-dot tp-dot-r"></span>
+            <span class="tp-dot tp-dot-y"></span>
+            <span class="tp-dot tp-dot-g"></span>
+            <span class="tp-bartitle">bash — 80×32</span>
+          </div>
+          <div class="tp-scroll-area" id="tp-scroll-area">
+            <div class="tp-screen" id="tp-screen"></div>
+            <div class="tp-typing-row" id="tp-typing-row" style="display: none">
+              <span class="tp-typing-prompt" id="tp-typing-prompt"></span>
+              <span class="tp-typing-text" id="tp-typing-text"></span>
+              <span class="tp-cursor"></span>
+            </div>
+            <div class="tp-input-row" id="tp-input-row" style="display: none">
+              <span class="tp-prompt-label" id="tp-prompt-label"></span>
+              <div class="tp-input-wrap">
+                <div
+                  class="tp-input"
+                  id="tp-input"
+                  contenteditable="true"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  role="presentation"
+                ></div>
+                <span class="tp-cursor"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.tp-block -->
+    </div><!-- /.tp-page -->
+
+    <!-- ゲームオーバーレイ -->
+    <div class="tp-game-overlay" id="tp-game-overlay">
+      <button class="tp-game-exit" id="tp-game-exit">[ EXIT ]</button>
+    </div>
+
+    <!-- スクリプト読み込み順序: profile → commands → game → terminal -->
+    <script src="profile.js"></script>
+    <script src="commands.js"></script>
+    <script src="game.js"></script>
+    <script src="terminal.js"></script>
+  </body>
+</html>
