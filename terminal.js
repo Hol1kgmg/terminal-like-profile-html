@@ -259,6 +259,15 @@ inp.addEventListener("keydown", function (e) {
   });
 });
 
+// ターミナル本体タップでフォーカス（モバイル対応）
+scrollArea.addEventListener("click", function (e) {
+  if (document.getElementById("tp-game-overlay").classList.contains("active")) return;
+  if (inputLocked) return;
+  var tags = ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "A"];
+  if (tags.indexOf(e.target.tagName) !== -1) return;
+  inp.focus();
+});
+
 // キー入力開始でフォーカス
 document.addEventListener("keydown", function (e) {
   if (document.getElementById("tp-game-overlay").classList.contains("active")) return;
