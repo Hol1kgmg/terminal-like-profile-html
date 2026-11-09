@@ -7,6 +7,19 @@
     <title>Terminal Profile</title>
     <link rel="icon" href="icon.svg" />
     <link rel="stylesheet" href="style.css" />
+    <script>
+      // 3D になりそうなら、cockpit.js が切り替えるまで暗い背景だけを出し、2D の配置を見せない
+      if (
+        "updateElementGeometry" in HTMLCanvasElement.prototype &&
+        matchMedia("(min-width: 1000px) and (min-height: 600px)").matches &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches
+      )
+        document.documentElement.classList.add("tp-boot");
+      // スクリプトが途中で失敗しても、隠したままにしない
+      addEventListener("error", function () {
+        document.documentElement.classList.remove("tp-boot");
+      });
+    </script>
   </head>
   <body>
     <div class="tp-page">

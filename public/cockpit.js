@@ -245,6 +245,7 @@
   var is3D = false;
 
   function apply() {
+    document.documentElement.classList.remove("tp-boot");
     var want = supported && wide.matches && !still.matches;
     modeEl.textContent = want ? "3D (HTML in Canvas)" : supported ? "2D" : "2D (HTML in Canvas 非対応)";
     if (want === is3D) return;

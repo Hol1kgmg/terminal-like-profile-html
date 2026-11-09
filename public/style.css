@@ -287,8 +287,13 @@ body {
 }
 
 /* ── コックピット（3D: cockpit.js がパネルを canvas に移す） ── */
-body:has(.tp-3d) {
+body:has(.tp-3d),
+.tp-boot body {
   background: #020814;
+}
+/* index.html の判定で 3D になりそうなとき、cockpit.js が切り替えるまで隠す */
+.tp-boot .tp-page {
+  visibility: hidden;
 }
 body:has(.tp-3d) .tp-logo-text {
   color: #e6f6ff;
