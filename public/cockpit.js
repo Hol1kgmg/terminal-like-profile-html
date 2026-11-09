@@ -106,6 +106,25 @@
   canvas.setAttribute("content", "drawable");
   var gl = canvas.content === "drawable" ? canvas.getContext("webgl2", { premultipliedAlpha: true }) : null;
   var supported = !!(gl && gl.texElementSubImage2D && canvas.updateElementGeometry);
+  function panelOf(node) {
+    return panels.filter(function (p) { return p.el.contains(node); })[0];
+  }
+
+  // カーソルが乗ったパネルをアクティブにする（2D / 3D 共通）
+  var hoverFocus = false; // ホバーによるフォーカスではカメラを動かさない
+  var pressed = false; // テキスト選択中は切り替えない
+  block.addEventListener("pointerdown", function () { pressed = true; });
+  addEventListener("pointerup", function () { pressed = false; });
+  block.addEventListener("pointerover", function (e) {
+    if (pressed || e.pointerType === "touch") return;
+    var p = panelOf(e.target);
+    if (!p || p.el.contains(document.activeElement)) return;
+    if (p.col === "main" && inputLocked) return; // ブート中は入力欄が非表示
+    hoverFocus = true;
+    (p.col === "main" ? inp : p.el).focus({ preventScroll: true });
+    hoverFocus = false;
+  });
+
   var wide = matchMedia("(min-width: 1000px) and (min-height: 600px)");
   var still = matchMedia("(prefers-reduced-motion: reduce)");
   var is3D = false;
@@ -214,7 +233,7 @@
   var home = [0, 0, 0]; // 全体が見える視点。resize で決まる
   var eye = null, look = [0, 0, -R];
   var focused = null; // キーボードでフォーカスした周辺パネル
-  var mouse = [0, 0], dragging = false;
+  var mouse = [0, 0];
 
   function layout() {
     ["left", "main", "right"].forEach(function (col) {
@@ -285,7 +304,7 @@
         look: p.center,
       };
     }
-    var k = dragging ? 0 : 1;
+    var k = pressed ? 0 : 1; // テキスト選択中にパネルが動かないよう視差を止める
     return { eye: [home[0] + mouse[0] * 40 * k, home[1] - mouse[1] * 24 * k, home[2]], look: [0, 0, -R] };
   }
 
@@ -377,22 +396,19 @@
 
   // ── 操作 ──
   block.addEventListener("pointermove", function (e) {
-    if (!is3D || dragging) return;
+    if (!is3D || pressed) return;
     var r = canvas.getBoundingClientRect();
     mouse = [((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1];
     canvas.requestPaint();
   });
-  // テキスト選択中にパネルが動かないよう、押している間は視差を止める
-  block.addEventListener("pointerdown", function () { dragging = true; });
-  addEventListener("pointerup", function () { dragging = false; });
 
   // Tab で周辺パネルに入ったらそのパネルに寄る。ターミナルに戻ったら全体表示
   block.addEventListener("focusin", function (e) {
     if (!is3D) return;
-    var p = panels.filter(function (q) { return q.el.contains(e.target); })[0];
+    var p = panelOf(e.target);
     if (!p) return;
     if (p.col === "main") focused = null;
-    else if (e.target.matches(":focus-visible")) focused = p;
+    else if (!hoverFocus && e.target.matches(":focus-visible")) focused = p;
     canvas.requestPaint();
   });
   block.addEventListener("focusout", function () {
