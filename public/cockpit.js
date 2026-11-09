@@ -32,7 +32,8 @@
   row(prof, "dept", P.dept);
   row(prof, "location", P.location);
   row(prof, "worktime", P.worktime);
-  prof.appendChild(el("p", "tp-d tp-info-quote", "“" + P.quote + "”"));
+  var coffee = row(prof, "coffee", "☕".repeat(P.coffee), "tp-n");
+  coffee.parentNode.appendChild(el("span", "tp-w", "# WARNING: 過剰摂取"));
 
   var sys = info("system");
   var brand =
