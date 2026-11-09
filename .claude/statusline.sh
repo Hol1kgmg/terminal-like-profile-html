@@ -14,4 +14,3 @@ latency=$(echo "scale=1; $duration_ms / 1000" | bc)
 
 # ステータスライン表示
 echo "${model} | ${input_tokens}/${output_tokens} tokens | Context: ${used}% used | ${latency}s "
-
