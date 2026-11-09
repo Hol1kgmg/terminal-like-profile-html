@@ -18,9 +18,20 @@
         <span class="tp-logo-cursor"></span>
       </header>
 
-      <!-- ターミナルUI骨格 -->
-      <div class="tp-block">
-        <div class="tp-win">
+      <!-- コックピット: 2D では3カラム、3D では cockpit.js がパネルを canvas に移す -->
+      <div class="tp-block" id="tp-cockpit">
+        <div class="tp-col tp-col-left">
+          <section class="tp-win tp-panel" id="tp-panel-profile" tabindex="0" aria-labelledby="tp-t-profile">
+            <div class="tp-bar"><span class="tp-bartitle" id="tp-t-profile">◈ PROFILE</span></div>
+            <div class="tp-info" id="tp-info-profile"></div>
+          </section>
+          <section class="tp-win tp-panel" id="tp-panel-system" tabindex="0" aria-labelledby="tp-t-system">
+            <div class="tp-bar"><span class="tp-bartitle" id="tp-t-system">◈ SYSTEM</span></div>
+            <div class="tp-info" id="tp-info-system"></div>
+          </section>
+        </div>
+        <div class="tp-col tp-col-main">
+        <div class="tp-win tp-panel tp-panel-main" id="tp-panel-main">
           <div class="tp-bar">
             <span class="tp-dot tp-dot-r"></span>
             <span class="tp-dot tp-dot-y"></span>
@@ -51,6 +62,22 @@
             </div>
           </div>
         </div>
+        </div><!-- /.tp-col-main -->
+        <div class="tp-col tp-col-right">
+          <section class="tp-win tp-panel" id="tp-panel-projects" tabindex="0" aria-labelledby="tp-t-projects">
+            <div class="tp-bar"><span class="tp-bartitle" id="tp-t-projects">◈ PROJECTS</span></div>
+            <div class="tp-info" id="tp-info-projects"></div>
+          </section>
+          <section class="tp-win tp-panel" id="tp-panel-skills" tabindex="0" aria-labelledby="tp-t-skills">
+            <div class="tp-bar"><span class="tp-bartitle" id="tp-t-skills">◈ SKILLS</span></div>
+            <div class="tp-info" id="tp-info-skills"></div>
+          </section>
+          <section class="tp-win tp-panel" id="tp-panel-links" tabindex="0" aria-labelledby="tp-t-links">
+            <div class="tp-bar"><span class="tp-bartitle" id="tp-t-links">◈ LINKS</span></div>
+            <div class="tp-info" id="tp-info-links"></div>
+          </section>
+        </div>
+        <canvas class="tp-canvas" id="tp-canvas"></canvas>
       </div><!-- /.tp-block -->
     </div><!-- /.tp-page -->
 
@@ -66,10 +93,11 @@
       </button>
     </div>
 
-    <!-- スクリプト読み込み順序: profile → commands → game → terminal -->
+    <!-- スクリプト読み込み順序: profile → commands → game → terminal → cockpit -->
     <script src="profile.js"></script>
     <script src="commands.js"></script>
     <script src="game.js"></script>
     <script src="terminal.js"></script>
+    <script src="cockpit.js"></script>
   </body>
 </html>

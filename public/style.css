@@ -16,7 +16,7 @@ body {
   font-family: "JetBrains Mono", "Courier New", monospace;
 }
 .tp-page {
-  max-width: 960px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 24px 24px;
   height: 100vh;
@@ -219,6 +219,129 @@ body {
 }
 .tp-block .tp-skill-lv {
   color: #ce9178;
+}
+
+/* ── コックピット（2D: 3カラム） ── */
+.tp-block {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2.4fr) minmax(220px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 16px;
+}
+.tp-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+.tp-col-left,
+.tp-col-right {
+  overflow-y: auto;
+}
+.tp-block .tp-panel:not(.tp-panel-main) {
+  flex: 0 0 auto;
+}
+.tp-block .tp-panel:not(.tp-panel-main) .tp-bartitle {
+  color: #4ec9b0;
+  text-align: left;
+}
+.tp-block .tp-panel:focus-visible {
+  outline: 2px solid #4ec9b0;
+  outline-offset: 2px;
+}
+.tp-block .tp-info {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #b8bcc8;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3f50 transparent;
+}
+.tp-block .tp-kv {
+  display: flex;
+  gap: 10px;
+}
+.tp-block .tp-kv > :first-child {
+  flex: none;
+  min-width: 9ch;
+}
+.tp-block .tp-info-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.tp-block .tp-info-quote {
+  margin-top: 8px;
+}
+.tp-block .tp-info-item + .tp-info-item {
+  margin-top: 10px;
+}
+.tp-block .tp-link {
+  color: #4ec9b0;
+}
+.tp-canvas {
+  display: none;
+}
+
+/* ── コックピット（3D: cockpit.js がパネルを canvas に移す） ── */
+body:has(.tp-3d) {
+  background: #020814;
+}
+body:has(.tp-3d) .tp-logo-text {
+  color: #e6f6ff;
+}
+.tp-page:has(.tp-3d) {
+  max-width: none;
+}
+.tp-block.tp-3d {
+  display: block;
+}
+.tp-3d .tp-col {
+  display: none;
+}
+.tp-3d .tp-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* canvas 内のパネルは固定サイズ。位置は WebGL 側で決める */
+.tp-3d .tp-panel {
+  width: 360px;
+  height: 220px;
+}
+.tp-3d #tp-panel-main {
+  width: 720px;
+  height: 480px;
+}
+.tp-3d #tp-panel-system { height: 180px; }
+.tp-3d #tp-panel-projects { height: 260px; }
+.tp-3d #tp-panel-skills { height: 170px; }
+.tp-3d #tp-panel-links { height: 120px; }
+
+/* ── 中画面以下: 縦積み（ターミナルが先頭） ── */
+@media (max-width: 999px) {
+  body {
+    overflow: auto;
+  }
+  .tp-page {
+    height: auto;
+    min-height: 100dvh;
+  }
+  .tp-block {
+    display: flex;
+    flex-direction: column;
+  }
+  .tp-col-main {
+    order: -1;
+    height: 75dvh;
+  }
+  .tp-col-left,
+  .tp-col-right {
+    overflow: visible;
+  }
 }
 
 /* オーバーレイ共通 */
