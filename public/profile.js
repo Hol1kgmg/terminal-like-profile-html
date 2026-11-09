@@ -13,6 +13,9 @@ var PROFILE = {
   quote: "知らざるを知らずと為す是知るなり(孔子)",
   x: "@Hol1kgmg",
   github: "Hol1kgmg",
+  // GitHub でピン留めしているリポジトリ（REPOS パネルに表示）
+  // ピン留めは認証なしの API で取れないため、変えたらここも直す
+  pinned: ["dotfiles", "nvimrc", "talks", "claude-temp"],
   message: "Sample",
   coffee: 4,
 

@@ -320,7 +320,7 @@ body:has(.tp-3d) .tp-logo-text {
   height: 480px;
 }
 .tp-3d #tp-panel-system { height: 180px; }
-.tp-3d #tp-panel-projects { height: 300px; }
+.tp-3d #tp-panel-projects { height: 270px; }
 .tp-3d #tp-panel-skills { height: 190px; }
 .tp-3d #tp-panel-links { height: 120px; }
 

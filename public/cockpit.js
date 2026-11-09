@@ -63,10 +63,8 @@
   }
   P.career.forEach(function (c) {
     var item = el("div", "tp-info-item");
-    item.appendChild(el("div", "tp-d", c.period));
     item.appendChild(el("div", "tp-hl", c.name));
-    item.appendChild(el("div", "tp-h", c.stack));
-    item.appendChild(el("div", "tp-d", c.desc));
+    item.appendChild(el("div", "tp-d", c.period));
     proj.appendChild(item);
   });
   P.skills.forEach(function (s) {
@@ -77,13 +75,17 @@
     skills.appendChild(r);
   });
 
-  function renderGitHub(list) {
-    list = list.filter(function (r) { return !r.fork; });
-    if (!list.length) return;
-    document.getElementById("tp-t-projects").textContent = "◈ REPOS · github";
+  function renderGitHub(all) {
+    var list = all.filter(function (r) { return !r.fork; });
+    var pinned = P.pinned
+      .map(function (name) { return all.filter(function (r) { return r.name === name; })[0]; })
+      .filter(Boolean);
+    if (!list.length || !pinned.length) return;
+    document.getElementById("tp-t-projects").textContent = "◈ PINNED · github";
     document.getElementById("tp-t-skills").textContent = "◈ LANGUAGES · github";
+    // パネル内でスクロールしないよう、1件2行（名前 / 言語 · 更新日）に絞る
     proj.textContent = "";
-    list.slice(0, 5).forEach(function (r) {
+    pinned.forEach(function (r) {
       var item = el("div", "tp-info-item");
       var a = el("a", "tp-link", r.name);
       a.href = r.html_url;
@@ -91,7 +93,6 @@
       a.rel = "noopener";
       item.appendChild(a);
       item.appendChild(el("div", "tp-h", (r.language || "—") + "  ·  " + r.pushed_at.slice(0, 10)));
-      if (r.description) item.appendChild(el("div", "tp-d", r.description));
       proj.appendChild(item);
     });
     // 言語の割合はリポジトリ数で数える（バイト数は repo ごとに API が要るため）
