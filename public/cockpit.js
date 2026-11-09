@@ -53,7 +53,14 @@
   setInterval(tick, 1000);
   addEventListener("resize", updateScreen);
 
+  // 右上2枚: GitHub の公開リポジトリから REPOS / LANGUAGES を表示する。
+  // 取得できるまで（失敗時はそのまま）PROFILE の career / skills を表示する
   var proj = info("projects");
+  var skills = info("skills");
+  function bar(ratio) {
+    var filled = Math.round(ratio * 10);
+    return "▓".repeat(filled) + "░".repeat(10 - filled);
+  }
   P.career.forEach(function (c) {
     var item = el("div", "tp-info-item");
     item.appendChild(el("div", "tp-d", c.period));
@@ -62,16 +69,63 @@
     item.appendChild(el("div", "tp-d", c.desc));
     proj.appendChild(item);
   });
-
-  var skills = info("skills");
   P.skills.forEach(function (s) {
     var r = el("div", "tp-kv");
     r.appendChild(el("span", "tp-k", s.name));
-    var filled = Math.round(s.lv / 10);
-    r.appendChild(el("span", "tp-s", "▓".repeat(filled) + "░".repeat(10 - filled)));
+    r.appendChild(el("span", "tp-s", bar(s.lv / 100)));
     r.appendChild(el("span", statusColor(s.status), s.status));
     skills.appendChild(r);
   });
+
+  function renderGitHub(list) {
+    list = list.filter(function (r) { return !r.fork; });
+    if (!list.length) return;
+    document.getElementById("tp-t-projects").textContent = "◈ REPOS · github";
+    document.getElementById("tp-t-skills").textContent = "◈ LANGUAGES · github";
+    proj.textContent = "";
+    list.slice(0, 5).forEach(function (r) {
+      var item = el("div", "tp-info-item");
+      var a = el("a", "tp-link", r.name);
+      a.href = r.html_url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      item.appendChild(a);
+      item.appendChild(el("div", "tp-h", (r.language || "—") + "  ·  " + r.pushed_at.slice(0, 10)));
+      if (r.description) item.appendChild(el("div", "tp-d", r.description));
+      proj.appendChild(item);
+    });
+    // 言語の割合はリポジトリ数で数える（バイト数は repo ごとに API が要るため）
+    var counts = {};
+    list.forEach(function (r) { if (r.language) counts[r.language] = (counts[r.language] || 0) + 1; });
+    var total = Object.keys(counts).reduce(function (s, k) { return s + counts[k]; }, 0);
+    skills.textContent = "";
+    Object.keys(counts)
+      .sort(function (a, b) { return counts[b] - counts[a]; })
+      .slice(0, 5)
+      .forEach(function (k) {
+        var r = el("div", "tp-kv");
+        r.appendChild(el("span", "tp-k", k));
+        r.appendChild(el("span", "tp-s", bar(counts[k] / total)));
+        r.appendChild(el("span", "tp-n", Math.round((counts[k] / total) * 100) + "%"));
+        skills.appendChild(r);
+      });
+  }
+
+  // 未認証 API は 60回/時/IP のため、タブを開いている間は sessionStorage に保存する
+  var GH_KEY = "tp-gh-repos";
+  var cached = null;
+  try { cached = JSON.parse(sessionStorage.getItem(GH_KEY)); } catch (e) {}
+  if (cached) renderGitHub(cached);
+  else
+    fetch("https://api.github.com/users/" + encodeURIComponent(P.github) + "/repos?sort=pushed&per_page=100")
+      .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
+      .then(function (list) {
+        try { sessionStorage.setItem(GH_KEY, JSON.stringify(list.map(function (r) {
+          return { name: r.name, html_url: r.html_url, language: r.language, pushed_at: r.pushed_at, description: r.description, fork: r.fork };
+        }))); } catch (e) {}
+        renderGitHub(list);
+      })
+      .catch(function () {}); // 取得できなければ PROFILE の内容のまま
 
   var links = info("links");
   [

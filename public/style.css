@@ -269,6 +269,9 @@ body {
   flex: none;
   min-width: 9ch;
 }
+.tp-block #tp-info-skills .tp-kv > :first-child {
+  min-width: 13ch;
+}
 .tp-block .tp-info-title {
   font-size: 16px;
   font-weight: 600;
@@ -317,8 +320,8 @@ body:has(.tp-3d) .tp-logo-text {
   height: 480px;
 }
 .tp-3d #tp-panel-system { height: 180px; }
-.tp-3d #tp-panel-projects { height: 260px; }
-.tp-3d #tp-panel-skills { height: 170px; }
+.tp-3d #tp-panel-projects { height: 300px; }
+.tp-3d #tp-panel-skills { height: 190px; }
 .tp-3d #tp-panel-links { height: 120px; }
 
 /* ── 中画面以下: 縦積み（ターミナルが先頭） ── */
