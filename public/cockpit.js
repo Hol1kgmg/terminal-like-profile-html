@@ -26,6 +26,43 @@
 
   var P = PROFILE;
 
+  // ── リンクのツールチップ ──
+  // 標準の title は OS の白い吹き出しになるため、自前のボックスをカーソル横に出す。
+  // 一時的な補助表示なので canvas の外に置き、2D / 3D で共通にする
+  var tips = new WeakMap(); // a → [[行のテキスト, クラス], ...]
+  var tipEl = el("div", "tp-tip");
+  tipEl.setAttribute("aria-hidden", "true"); // 読み上げは aria-description で行う
+  document.body.appendChild(tipEl);
+  function bareUrl(u) {
+    return u.replace(/^https:\/\//, "");
+  }
+  function setTip(a, lines) {
+    lines = lines.filter(function (l) { return l[0]; });
+    tips.set(a, lines);
+    a.setAttribute("aria-description", lines.map(function (l) { return l[0]; }).join(" / "));
+  }
+  function moveTip(e) {
+    var x = e.clientX + 14, y = e.clientY + 18;
+    tipEl.style.left = Math.min(x, innerWidth - tipEl.offsetWidth - 8) + "px";
+    tipEl.style.top = (y + tipEl.offsetHeight > innerHeight ? e.clientY - tipEl.offsetHeight - 10 : y) + "px";
+  }
+  document.addEventListener("pointerover", function (e) {
+    var a = e.target.closest && e.target.closest("a");
+    var lines = a && e.pointerType !== "touch" && tips.get(a);
+    if (!lines) return;
+    tipEl.textContent = "";
+    lines.forEach(function (l) { tipEl.appendChild(el("div", l[1], l[0])); });
+    tipEl.classList.add("active");
+    moveTip(e);
+  });
+  document.addEventListener("pointermove", function (e) {
+    if (tipEl.classList.contains("active")) moveTip(e);
+  });
+  document.addEventListener("pointerout", function (e) {
+    var a = e.target.closest && e.target.closest("a");
+    if (a && !a.contains(e.relatedTarget)) tipEl.classList.remove("active");
+  });
+
   var prof = info("profile");
   prof.appendChild(el("div", "tp-hl tp-info-title", P.name));
   prof.appendChild(el("div", "tp-s", P.role));
@@ -92,9 +129,7 @@
       a.href = r.html_url;
       a.target = "_blank";
       a.rel = "noopener";
-      a.title = [r.description, "★" + r.stargazers_count, a.href.replace(/^https:\/\//, "")]
-        .filter(Boolean)
-        .join(" · ");
+      setTip(a, [[r.description, "tp-tip-text"], ["★" + r.stargazers_count, "tp-tip-num"], [bareUrl(a.href), "tp-tip-url"]]);
       item.appendChild(a);
       item.appendChild(el("div", "tp-h", (r.language || "—") + "  ·  " + r.pushed_at.slice(0, 10)));
       proj.appendChild(item);
@@ -141,7 +176,6 @@
     });
   }, renderGitHub);
 
-  // ホバー時に title でアクセス先の情報を出す
   var links = info("links");
   var ghLink;
   [
@@ -154,7 +188,7 @@
     a.href = l[2];
     a.target = "_blank";
     a.rel = "noopener";
-    a.title = l[2].replace(/^https:\/\//, "");
+    setTip(a, [[bareUrl(l[2]), "tp-tip-url"]]);
     r.appendChild(a);
     links.appendChild(r);
     ghLink = a;
@@ -162,9 +196,11 @@
   ghCached("tp-gh-user", "users/" + user, function (u) {
     return { bio: u.bio && u.bio.replace(/\s+/g, " "), public_repos: u.public_repos, followers: u.followers };
   }, function (u) {
-    ghLink.title = [u.bio, "repos " + u.public_repos + " · followers " + u.followers, ghLink.title]
-      .filter(Boolean)
-      .join("\n");
+    setTip(ghLink, [
+      [u.bio, "tp-tip-text"],
+      ["repos " + u.public_repos + " · followers " + u.followers, "tp-tip-num"],
+      [bareUrl(ghLink.href), "tp-tip-url"],
+    ]);
   });
 
   // ── 3D / 2D の切り替え ──

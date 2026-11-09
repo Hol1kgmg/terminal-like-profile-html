@@ -344,6 +344,30 @@ body:has(.tp-3d) .tp-logo-text {
   }
 }
 
+/* ── リンクのツールチップ（cockpit.js） ── */
+.tp-tip {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  max-width: 320px;
+  padding: 8px 12px;
+  background: #0f1117;
+  border: 1px solid #4ec9b0;
+  border-radius: 6px;
+  box-shadow: 0 0 14px rgba(78, 201, 176, 0.35), 0 6px 20px rgba(0, 0, 0, 0.5);
+  font-family: "JetBrains Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  pointer-events: none;
+  overflow-wrap: anywhere;
+}
+.tp-tip.active {
+  display: block;
+}
+.tp-tip-text { color: #b8bcc8; }
+.tp-tip-num  { color: #ce9178; }
+.tp-tip-url  { color: #4ec9b0; }
+
 /* オーバーレイ共通 */
 .tp-overlay {
   display: none;
