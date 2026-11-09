@@ -92,6 +92,9 @@
       a.href = r.html_url;
       a.target = "_blank";
       a.rel = "noopener";
+      a.title = [r.description, "★" + r.stargazers_count, a.href.replace(/^https:\/\//, "")]
+        .filter(Boolean)
+        .join(" · ");
       item.appendChild(a);
       item.appendChild(el("div", "tp-h", (r.language || "—") + "  ·  " + r.pushed_at.slice(0, 10)));
       proj.appendChild(item);
@@ -113,23 +116,34 @@
       });
   }
 
-  // 未認証 API は 60回/時/IP のため、タブを開いている間は sessionStorage に保存する
-  var GH_KEY = "tp-gh-repos";
-  var cached = null;
-  try { cached = JSON.parse(sessionStorage.getItem(GH_KEY)); } catch (e) {}
-  if (cached) renderGitHub(cached);
-  else
-    fetch("https://api.github.com/users/" + encodeURIComponent(P.github) + "/repos?sort=pushed&per_page=100")
+  // 未認証 API は 60回/時/IP のため、タブを開いている間は sessionStorage に保存する。
+  // pick で必要なフィールドだけ残す。取得できなければ何もしない（表示は既定のまま）
+  function ghCached(key, path, pick, render) {
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(key)); } catch (e) {}
+    if (cached) return render(cached);
+    fetch("https://api.github.com/" + path)
       .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
-      .then(function (list) {
-        try { sessionStorage.setItem(GH_KEY, JSON.stringify(list.map(function (r) {
-          return { name: r.name, html_url: r.html_url, language: r.language, pushed_at: r.pushed_at, description: r.description, fork: r.fork };
-        }))); } catch (e) {}
-        renderGitHub(list);
+      .then(function (data) {
+        data = pick(data);
+        try { sessionStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+        render(data);
       })
-      .catch(function () {}); // 取得できなければ PROFILE の内容のまま
+      .catch(function () {});
+  }
+  var user = encodeURIComponent(P.github);
+  ghCached("tp-gh-repos-v2", "users/" + user + "/repos?sort=pushed&per_page=100", function (list) {
+    return list.map(function (r) {
+      return {
+        name: r.name, html_url: r.html_url, language: r.language, pushed_at: r.pushed_at,
+        description: r.description, fork: r.fork, stargazers_count: r.stargazers_count,
+      };
+    });
+  }, renderGitHub);
 
+  // ホバー時に title でアクセス先の情報を出す
   var links = info("links");
+  var ghLink;
   [
     ["X", P.x, "https://x.com/" + P.x.replace(/^@/, "")],
     ["GitHub", "github.com/" + P.github, "https://github.com/" + P.github],
@@ -140,8 +154,17 @@
     a.href = l[2];
     a.target = "_blank";
     a.rel = "noopener";
+    a.title = l[2].replace(/^https:\/\//, "");
     r.appendChild(a);
     links.appendChild(r);
+    ghLink = a;
+  });
+  ghCached("tp-gh-user", "users/" + user, function (u) {
+    return { bio: u.bio && u.bio.replace(/\s+/g, " "), public_repos: u.public_repos, followers: u.followers };
+  }, function (u) {
+    ghLink.title = [u.bio, "repos " + u.public_repos + " · followers " + u.followers, ghLink.title]
+      .filter(Boolean)
+      .join("\n");
   });
 
   // ── 3D / 2D の切り替え ──
