@@ -8,12 +8,13 @@
 
 | ファイル | 説明 |
 |----------|------|
-| `index.html` | エントリポイント |
-| `style.css` | デザイン定義 |
-| `profile.js` | プロフィールデータ・ブート設定 ★編集 |
-| `commands.js` | コマンド定義 ★編集 |
-| `game.js` | ゲームロジック |
-| `terminal.js` | ターミナルエンジン |
+| `public/index.html` | エントリポイント |
+| `public/style.css` | デザイン定義 |
+| `public/profile.js` | プロフィールデータ・ブート設定 ★編集 |
+| `public/commands.js` | コマンド定義 ★編集 |
+| `public/game.js` | ゲームロジック |
+| `public/terminal.js` | ターミナルエンジン |
+| `wrangler.toml` | Cloudflare Pages 設定（出力先 `public/`） |
 
 ## ローカルでの動作確認
 
@@ -22,13 +23,13 @@
 ### Python
 
 ```bash
-python3 -m http.server 8080
+python3 -m http.server 8080 -d public
 ```
 
 ### Node.js（npx）
 
 ```bash
-npx serve .
+npx serve public
 ```
 
 いずれかを実行後、ブラウザで `http://localhost:8080` を開く。

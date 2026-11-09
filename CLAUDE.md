@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A terminal-styled profile page. A simple static web application contained in a single `index.html` file. Displays personal information such as name, skills, and background in a command-line interface style.
+A terminal-styled profile page. A simple static web application served from `public/` (entry: `public/index.html`). Displays personal information such as name, skills, and background in a command-line interface style.
 
 
 ## Rules and Skills Structure
